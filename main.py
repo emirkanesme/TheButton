@@ -7,15 +7,12 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from dotenv import load_dotenv
+os.system("cls")
 
-# Load environment variables
 load_dotenv()
 user_mail = os.getenv('USER_MAIL')
 user_passwd = os.getenv('USER_PASSWD')
 mail_to = os.getenv("MAIL_TO")
-print(user_mail)
-print(user_passwd)
-print(mail_to)
 
 class Window(QWidget):
     def __init__(self):
@@ -25,28 +22,24 @@ class Window(QWidget):
     def root(self):
         layout = QVBoxLayout()
 
-        # Font settings
+
         font = QFont("Arial", 14)
         font.setItalic(True)
 
-        # Label for selected photo folder
         self.photo_label = QLabel("Select a folder with your photos:")
         self.photo_label.setFont(font)
         layout.addWidget(self.photo_label)
 
-        # Button to select photo folder
         self.photo_button = QPushButton("Select Folder")
         self.photo_button.setFont(font)
         layout.addWidget(self.photo_button)
         self.photo_button.clicked.connect(self.select_folder)
 
-        # Text input for custom message
         self.message_input = QTextEdit()
         self.message_input.setFont(font)
         self.message_input.setPlaceholderText("Enter your message here...")
         layout.addWidget(self.message_input)
 
-        # Submit button
         self.submit = QPushButton("Submit")
         self.submit.setFont(font)
         layout.addWidget(self.submit)
@@ -55,7 +48,7 @@ class Window(QWidget):
         self.setLayout(layout)
         self.setFixedHeight(800)        
         self.setFixedWidth(700)        
-        self.setWindowTitle("Photo Message Sender")
+        self.setWindowTitle("The Button")
         self.show()
 
     def select_folder(self):
@@ -68,7 +61,6 @@ class Window(QWidget):
             self.photo_label.setText("Please select a folder first.")
             return
         
-        # Select a random photo
         photos = os.listdir(self.folder)
         if not photos:
             self.photo_label.setText("The selected folder is empty.")
@@ -77,26 +69,25 @@ class Window(QWidget):
         photo = random.choice(photos)
         photo_path = os.path.join(self.folder, photo)
 
-        # Get the message from the user
         message = self.message_input.toPlainText()
 
         if not message:
             self.photo_label.setText("Please enter a message.")
             return
 
-        # Send the email
         try:
             self.email_with_attachment(mail_to, message, photo_path)
             self.photo_label.setText("Email sent successfully!")
         except Exception as e:
             print(e)
-            self.photo_label.setText(f"Failed to send email: {str(e)}")
+            self.photo_label.setText(f"Failed to send email !!!!")
+            self.message_input.setText(f"{str(e)}")
 
     def email_with_attachment(self, recipient, message, attachment):
         msg = MIMEMultipart()
         msg['From'] = user_mail
         msg['To'] = recipient
-        msg['Subject'] = "A Special Message for You"
+        msg['Subject'] = self.message_input.toPlainText()
 
         msg.attach(MIMEText(message, 'plain'))
 
